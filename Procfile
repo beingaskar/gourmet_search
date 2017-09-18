@@ -1,0 +1,1 @@
+web: gunicorn gourmet_search.wsgi --log-file -
