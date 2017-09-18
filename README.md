@@ -26,7 +26,7 @@ python manage.py perform_downsize --input_file=assets/foods.txt --count=100000
 Use the below management command:
 
 ```html
-python manage.py build_index --input_file=assets/foods.txt --count=100000
+python manage.py build_index --input_file=assets/food_reviews.json
 ```
 * input_file (Mandatory) : Path to downsized food reviews file. (Default value : assets/food_reviews.json)
 
