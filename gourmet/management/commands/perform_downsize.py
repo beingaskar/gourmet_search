@@ -55,7 +55,7 @@ class Command(BaseCommand):
             '--input_file',
             type=str,
             required=True,
-            default=ASSETS_DIR + "foods.txt",
+            default=ASSETS_DIR + "/foods.txt",
             help='File path for gourmet food reviews.',
         )
 
@@ -63,7 +63,7 @@ class Command(BaseCommand):
             '--output_file',
             type=str,
             required=False,
-            default=ASSETS_DIR + "food_reviews.json",
+            default=ASSETS_DIR + "/food_reviews.json",
             help='Output path for downsized file.',
         )
 

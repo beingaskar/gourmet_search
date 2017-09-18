@@ -3,6 +3,8 @@ import json
 from django.core.management import BaseCommand
 from django.conf import settings
 
+ASSETS_DIR = getattr(settings, "ASSETS_DIR")
+
 
 class Command(BaseCommand):
 
@@ -50,7 +52,7 @@ class Command(BaseCommand):
             '--input_file',
             type=str,
             required=True,
-            default=settings.ASSETS_DIR+"food_reviews.json",
+            default=ASSETS_DIR+"/food_reviews.json",
             help='Path to downsized food reviews file.',
         )
 
@@ -58,7 +60,7 @@ class Command(BaseCommand):
             '--output_file',
             type=str,
             required=False,
-            default=settings.ASSETS_DIR + "index.json",
+            default=ASSETS_DIR + "/index.json",
             help='Output path for downsized file.',
         )
 
