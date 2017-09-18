@@ -40,6 +40,9 @@ python manage.py build_index --input_file=assets/food_reviews.json
 * FILES : The location of various assets available.
 * MAX_REVIEWS_COUNT_PER_HIT : Maximum number of reviews returned per search. (Defaulted to 20).
 
+## Get the API's on Postman
+[Click here](https://www.getpostman.com/collections/2522489d4e71503df409)
+
 ## Live Demo
 Live demo is deployed on heroku. [Click here](https://gourmet-hunt.herokuapp.com/)
 
