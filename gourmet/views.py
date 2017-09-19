@@ -40,18 +40,18 @@ class ReviewSearchAPI(generics.GenericAPIView):
         [review_indices.extend(index_term_level.get(q.lower(), [])) for q in query]
 
         reviews_score_data = []
-        for ind in review_indices:
+        for ind in set(review_indices):
             ind = str(ind)
             query_score = 0
             for q in query:
                 query_score += index_review_level[ind]["terms"].get(q, 0)
-                reviews_score_data.append(
-                    {
-                        'query_score': query_score,
-                        'review_score': index_review_level[ind]["review_score"],
-                        'id': ind
-                    }
-                )
+            reviews_score_data.append(
+                {
+                    'query_score': query_score,
+                    'review_score': index_review_level[ind]["review_score"],
+                    'id': ind
+                }
+            )
 
         reviews_score_data = sorted(
             reviews_score_data,
