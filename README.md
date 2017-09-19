@@ -43,6 +43,12 @@ python manage.py build_index --input_file=assets/food_reviews.json
 ## Get the API's on Postman
 [Click here](https://www.getpostman.com/collections/2522489d4e71503df409)
 
+## Testing
+Performed using coverage.
+```html
+coverage run manage.py test -v 2
+```
+
 ## Live Demo
 Live demo is deployed on heroku. [Click here](https://gourmet-hunt.herokuapp.com/search/)
 
