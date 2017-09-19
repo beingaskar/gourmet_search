@@ -4,10 +4,7 @@ from rest_framework import status as http_status
 
 from django.conf import settings
 from .forms import SearchFormSerializer
-from .utils import load_json_data, get_popular_words
-
-reviews_index = load_json_data(settings.FILES["REVIEWS"]["INDEX"])
-reviews_data = load_json_data(settings.FILES["REVIEWS"]["DATA"])
+from .utils import get_popular_words
 
 MAX_REVIEWS_COUNT_PER_HIT = getattr(settings, 'MAX_REVIEWS_COUNT_PER_HIT', 20)
 
@@ -22,14 +19,14 @@ class ReviewSearchAPI(generics.GenericAPIView):
         For now, reading from file on every server restart. Any change will be handled here.
         """
 
-        return reviews_index
+        return settings.REVIEWS_INDEX
 
     def get_reviews_data(self):
         """
         Returns review data.
         For now, reading from file on every server restart. Any change will be handled here.
         """
-        return reviews_data
+        return settings.REVIEWS_DATA
 
     def post(self, request):
         query = request.data.get('query', [])

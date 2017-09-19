@@ -119,3 +119,8 @@ FILES = {
         "DATA": ASSETS_DIR + "/food_reviews.json"
     }
 }
+
+try:
+    from local_settings import *
+except ImportError:
+    pass

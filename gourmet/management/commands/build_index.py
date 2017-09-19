@@ -1,5 +1,7 @@
 import sys
 import json
+import re
+import string
 from django.core.management import BaseCommand
 from django.conf import settings
 
@@ -10,7 +12,35 @@ class Command(BaseCommand):
 
     help = "Build index for the downsized reviews."
 
-    def build_index(self, input_filename, output_filename, delimiter_chars=",.;:!?"):
+    def strip_html(self, content):
+        """
+        Strip off any HTML tags (or portions of it) present in the content.
+        """
+
+        cleanr = re.compile('<.*?>')
+        clean_text = re.sub(cleanr, '', content)
+
+        incomplete_tags = ["(<br", "<br", "br>", "/>"]
+        for tag in incomplete_tags:
+            clean_text = clean_text.replace(tag, "")
+
+        return clean_text
+
+    def clean_words(self, word):
+        """
+        Convert given word string to various substrings (if possible) after removing punctuations.
+        """
+
+        for char in string.punctuation:
+            word = word.strip(char)
+            word = word.replace(char, " ")
+        return [w for w in word.split(" ") if w]
+
+    def build_index(self, input_filename, output_filename):
+        """
+        Generate the index for given input file.
+        """
+
         try:
             word_occurrences = {}
 
@@ -25,7 +55,13 @@ class Command(BaseCommand):
                     words = words_summary
                     words.extend(words_text)
                     words = list(set(words))
-                    words2 = [word.strip(delimiter_chars).lower() for word in words]
+
+                    words2 = []
+                    for word in words:
+                        word = word.lower()
+                        word = self.strip_html(word)
+                        words = self.clean_words(word)
+                        words2.extend(words)
 
                     for word in words2:
                         if word:
@@ -61,7 +97,7 @@ class Command(BaseCommand):
             type=str,
             required=False,
             default=ASSETS_DIR + "/index.json",
-            help='Output path for downsized file.',
+            help='Output path for index file.',
         )
 
     def handle(self, *args, **options):
