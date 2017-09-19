@@ -106,11 +106,6 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
-import dj_database_url
-DATABASES['default'] = dj_database_url.config()
-
 ASSETS_DIR = os.path.abspath(os.path.join(BASE_DIR, 'assets'))
 
 FILES = {
