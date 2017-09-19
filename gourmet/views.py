@@ -30,9 +30,9 @@ class ReviewSearchAPI(generics.GenericAPIView):
         return settings.REVIEWS_DATA
 
     def post(self, request):
-        query = request.data.get('query', [])
+        query = request.data.get('query', '')
         query = query.split(" ")
-        if not query:
+        if not query or query == ['']:
             return Response(
                 {"error": "Insufficient arguments"}, http_status.HTTP_400_BAD_REQUEST)
 
