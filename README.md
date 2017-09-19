@@ -47,3 +47,5 @@ python manage.py build_index --input_file=assets/food_reviews.json
 Live demo is deployed on heroku. [Click here](https://gourmet-hunt.herokuapp.com/search/)
 
 Sample input : cat coffee cinnamon
+
+Sample Response : [Click here](https://api.myjson.com/bins/zvcxp)
