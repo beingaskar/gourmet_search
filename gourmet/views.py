@@ -32,13 +32,18 @@ class ReviewSearchAPI(generics.GenericAPIView):
         query = request.data.get('query', [])
         query = query.split(" ")
         if not query:
-            return Response({"error": "Insufficient arguments"}, http_status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Insufficient arguments"}, http_status.HTTP_400_BAD_REQUEST)
 
+        # Loading static data (reviews data, indexes) to variables.
+        reviews_data = self.get_reviews_data()
         index_term_level, index_review_level = self.get_index()
 
+        # Fetch all indices of reviews whose content (or summary) contains query terms.
         review_indices = []
         [review_indices.extend(index_term_level.get(q.lower(), [])) for q in query]
 
+        # Calculating query score for reviews retrieved from previous steps.
         reviews_score_data = []
         for ind in set(review_indices):
             ind = str(ind)
@@ -53,14 +58,15 @@ class ReviewSearchAPI(generics.GenericAPIView):
                 }
             )
 
+        # Sorting reviews score data based on 2 criteria's. (query_score and review_score)).
         reviews_score_data = sorted(
             reviews_score_data,
             key=lambda score_data: (score_data['query_score'], score_data['review_score']),
             reverse=True
         )
 
-        reviews_data = self.get_reviews_data()
-
-        reviews_data = [reviews_data[int(review['id'])] for review in reviews_score_data[:20]]
+        # Fetching reviews of top K highest scored documents.
+        reviews_data = [reviews_data[int(review['id'])] \
+                        for review in reviews_score_data[:MAX_REVIEWS_COUNT_PER_HIT]]
 
         return Response(reviews_data, http_status.HTTP_200_OK)

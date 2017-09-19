@@ -85,6 +85,10 @@ class Command(BaseCommand):
                 json.dump(word_occurrences, outfile)
 
     def build_index_review(self, reviews_data, terms_index, output_filename):
+        """
+        Generate the index (review-> (terms, review_score)) for given input file.
+        """
+
         terms_index = load_json_data(terms_index)
         reviews_data = load_json_data(reviews_data)
         result = {}
@@ -121,7 +125,7 @@ class Command(BaseCommand):
             type=str,
             required=False,
             default=ASSETS_DIR + "/index_2.json",
-            help='Output path for index (document -> terms) file.',
+            help='Output path for index (document -> (terms, review_score)) file.',
         )
 
     def handle(self, *args, **options):
