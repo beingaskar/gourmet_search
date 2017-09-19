@@ -5,6 +5,8 @@ import string
 from django.core.management import BaseCommand
 from django.conf import settings
 
+from gourmet.utils import load_json_data
+
 ASSETS_DIR = getattr(settings, "ASSETS_DIR")
 
 
@@ -36,9 +38,9 @@ class Command(BaseCommand):
             word = word.replace(char, " ")
         return [w for w in word.split(" ") if w]
 
-    def build_index(self, input_filename, output_filename):
+    def build_index_terms(self, input_filename, output_filename):
         """
-        Generate the index for given input file.
+        Generate the index (terms-> review) for given input file.
         """
 
         try:
@@ -82,6 +84,20 @@ class Command(BaseCommand):
             with open(output_filename, 'w') as outfile:
                 json.dump(word_occurrences, outfile)
 
+    def build_index_review(self, reviews_data, terms_index, output_filename):
+        terms_index = load_json_data(terms_index)
+        reviews_data = load_json_data(reviews_data)
+        result = {}
+        for term, indices in terms_index.items():
+            for ind in indices:
+                if not result.has_key(ind):
+                    result[ind] = {"terms": {}, "review_score": reviews_data[ind].get("review/score", '0.0')}
+                result[ind]["terms"][term] = 1
+
+        if result:
+            with open(output_filename, 'w') as outfile:
+                json.dump(result, outfile)
+
     def add_arguments(self, parser):
 
         parser.add_argument(
@@ -93,19 +109,30 @@ class Command(BaseCommand):
         )
 
         parser.add_argument(
-            '--output_file',
+            '--output_file_1',
             type=str,
             required=False,
-            default=ASSETS_DIR + "/index.json",
-            help='Output path for index file.',
+            default=ASSETS_DIR + "/index_1.json",
+            help='Output path for index (term -> documents) file.',
+        )
+
+        parser.add_argument(
+            '--output_file_2',
+            type=str,
+            required=False,
+            default=ASSETS_DIR + "/index_2.json",
+            help='Output path for index (document -> terms) file.',
         )
 
     def handle(self, *args, **options):
 
         input_file = options.get('input_file')
-        output_file = options.get('output_file')
+        output_file_1 = options.get('output_file_1')
+        output_file_2 = options.get('output_file_2')
 
-        self.stdout.write(">> Please sit back and relax while the indexing is done.")
-        self.build_index(input_file, output_file)
+        # self.stdout.write(">> Building Index (1 of 2).")
+        # self.build_index_terms(input_file, output_file_1)
+        self.stdout.write(">> Building Index (2 of 2).")
+        self.build_index_review(input_file, output_file_1, output_file_2)
         self.stdout.write(">> Indexing successfully completed!")
 

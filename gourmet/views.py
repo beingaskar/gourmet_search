@@ -4,7 +4,6 @@ from rest_framework import status as http_status
 
 from django.conf import settings
 from .forms import SearchFormSerializer
-from .utils import get_popular_words
 
 MAX_REVIEWS_COUNT_PER_HIT = getattr(settings, 'MAX_REVIEWS_COUNT_PER_HIT', 20)
 
@@ -13,13 +12,14 @@ class ReviewSearchAPI(generics.GenericAPIView):
 
     serializer_class = SearchFormSerializer
 
-    def get_reviews_index(self):
+    def get_index(self):
         """
         Returns the reviews index.
         For now, reading from file on every server restart. Any change will be handled here.
         """
 
-        return settings.REVIEWS_INDEX
+        return settings.REVIEWS_INDEX_TERM_LEVEL, \
+               settings.REVIEWS_INDEX_REVIEW_LEVEL
 
     def get_reviews_data(self):
         """
@@ -34,28 +34,33 @@ class ReviewSearchAPI(generics.GenericAPIView):
         if not query:
             return Response({"error": "Insufficient arguments"}, http_status.HTTP_400_BAD_REQUEST)
 
+        index_term_level, index_review_level = self.get_index()
+
         review_indices = []
-        [review_indices.extend(self.get_reviews_index().get(q.lower(), [])) for q in query]
+        [review_indices.extend(index_term_level.get(q.lower(), [])) for q in query]
 
-        review_ids_by_score, score_dict = get_popular_words(review_indices, MAX_REVIEWS_COUNT_PER_HIT)
+        reviews_score_data = []
+        for ind in review_indices:
+            ind = str(ind)
+            query_score = 0
+            for q in query:
+                query_score += index_review_level[ind]["terms"].get(q, 0)
+                reviews_score_data.append(
+                    {
+                        'query_score': query_score,
+                        'review_score': index_review_level[ind]["review_score"],
+                        'id': ind
+                    }
+                )
 
-        # Handling tie and sorting (if query_score is same). Sorting by 'review/score' in that case.
-        result = []
-        last_score, last_index = None, None
-        for i, review_id in enumerate(review_ids_by_score):
-            review = self.get_reviews_data()[review_id]
-            query_score = score_dict.get(review_id)
+        reviews_score_data = sorted(
+            reviews_score_data,
+            key=lambda score_data: (score_data['query_score'], score_data['review_score']),
+            reverse=True
+        )
 
-            if query_score == last_score:
+        reviews_data = self.get_reviews_data()
 
-                list_pre, list_post = result[:last_index], result[i+1:]
-                li = result[last_index:i+1]
-                li.append(review)
-                sorted_list = sorted(li, key=lambda k: k['review/score'], reverse=True)
-                result = list_pre + sorted_list + list_post
-            else:
-                result.append(review)
-                last_index = i
-            last_score = query_score
+        reviews_data = [reviews_data[int(review['id'])] for review in reviews_score_data[:20]]
 
-        return Response(result, http_status.HTTP_200_OK)
+        return Response(reviews_data, http_status.HTTP_200_OK)

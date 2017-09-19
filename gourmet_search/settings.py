@@ -109,13 +109,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
+DATABASES['default'] = dj_database_url.config()
 
 ASSETS_DIR = os.path.abspath(os.path.join(BASE_DIR, 'assets'))
 
 FILES = {
     "REVIEWS": {
-        "INDEX": ASSETS_DIR + "/index.json",
+        "INDEX_TERM_LEVEL": ASSETS_DIR + "/index_1.json",
+        "INDEX_REVIEW_LEVEL": ASSETS_DIR + "/index_2.json",
         "DATA": ASSETS_DIR + "/food_reviews.json"
     }
 }

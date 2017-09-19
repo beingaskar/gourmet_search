@@ -10,6 +10,10 @@ class Command(BaseCommand):
     help = "Downsize the gourmet data."
 
     def read_chunks(self, f, newline):
+        """
+        Read a bulk file in chunks.
+        """
+
         buf = ""
         while True:
             while newline in buf:
@@ -23,6 +27,10 @@ class Command(BaseCommand):
             buf += chunk
 
     def perform_down_size(self, file_input, file_output, count=100000):
+        """
+        Downsize a bulk file to a smaller one of given size.
+        """
+
         with open(file_input) as f:
             reviews = []
             review_dict = {}
