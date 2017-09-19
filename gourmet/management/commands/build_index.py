@@ -130,8 +130,8 @@ class Command(BaseCommand):
         output_file_1 = options.get('output_file_1')
         output_file_2 = options.get('output_file_2')
 
-        # self.stdout.write(">> Building Index (1 of 2).")
-        # self.build_index_terms(input_file, output_file_1)
+        self.stdout.write(">> Building Index (1 of 2).")
+        self.build_index_terms(input_file, output_file_1)
         self.stdout.write(">> Building Index (2 of 2).")
         self.build_index_review(input_file, output_file_1, output_file_2)
         self.stdout.write(">> Indexing successfully completed!")
