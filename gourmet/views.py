@@ -1,3 +1,4 @@
+from __future__ import division
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status as http_status
@@ -50,6 +51,7 @@ class ReviewSearchAPI(generics.GenericAPIView):
             query_score = 0
             for q in query:
                 query_score += index_review_level[ind]["terms"].get(q, 0)
+            query_score = query_score / len(query)
             reviews_score_data.append(
                 {
                     'query_score': query_score,
