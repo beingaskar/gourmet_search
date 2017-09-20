@@ -116,7 +116,16 @@ FILES = {
     }
 }
 
+# Static Data
+# Load static data from json to settings variable.
+from gourmet.utils import load_json_data
+
+REVIEWS_INDEX_TERM_LEVEL = load_json_data(FILES["REVIEWS"]["INDEX_TERM_LEVEL"])
+REVIEWS_INDEX_REVIEW_LEVEL = load_json_data(FILES["REVIEWS"]["INDEX_REVIEW_LEVEL"])
+REVIEWS_DATA = load_json_data(FILES["REVIEWS"]["DATA"])
+
 try:
     from local_settings import *
 except ImportError:
     pass
+
