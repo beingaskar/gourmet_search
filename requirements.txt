@@ -12,7 +12,7 @@ pickleshare==0.5
 pyreadline==2.1
 simplegeneric==0.8.1
 traitlets==4.0.0
-urllib3==1.22
+urllib3==1.26.5
 virtualenv==13.1.2
 virtualenvwrapper-win==1.2.1
 whitenoise==3.3.0
